@@ -82,7 +82,6 @@ X_flat = X.reshape(X.shape[0], -1)
 # Apply SMOTE
 smote = SMOTE(random_state=42)
 X_resampled, y_resampled = smote.fit_resample(X_flat, y)
-# Reshape X back to original shape
 X_resampled = X_resampled.reshape(X_resampled.shape[0], features[0].shape[0], features[0].shape[1], 1)
 
 X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42,
@@ -138,21 +137,17 @@ history = model.fit(
 test_loss, test_acc = model.evaluate(X_test, y_test)
 print('Test accuracy:', test_acc)
 
-# Predict on test data
 y_pred_probs = model.predict(X_test)
 y_pred_classes = (y_pred_probs > 0.5).astype(int)
 
-# Confusion Matrix
 cm = confusion_matrix(y_test, y_pred_classes)
 print('Confusion Matrix:')
 print(cm)
 
-# Classification Report
 cr = classification_report(y_test, y_pred_classes, target_names=['Healthy', 'COVID-19 Positive'])
 print('Classification Report:')
 print(cr)
 
-# ROC-AUC Score
 roc_auc = roc_auc_score(y_test, y_pred_probs)
 print(f'ROC-AUC Score: {roc_auc:.2f}')
 

@@ -1,3 +1,5 @@
+import traceback
+
 import librosa
 from librosa import feature
 import numpy as np
@@ -24,6 +26,18 @@ def convert_to_wav(file_path):
 
 def extract_features(file_path, max_len=216):
     try:
+        if not os.path.exists(file_path):
+            print(f"File does not exist: {file_path}")
+            return None
+        if not os.access(file_path, os.R_OK):
+            print(f"File is not readable: {file_path}")
+            return None
+        file_size = os.path.getsize(file_path)
+        print(f"File size: {file_size} bytes")
+        if file_size == 0:
+            print("Audio file is empty.")
+            return None
+
         print(0, file_path)
         audio, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
         print(0.1)
@@ -51,6 +65,7 @@ def extract_features(file_path, max_len=216):
             print(5.2, features)
     except Exception as e:
         print(f"Error encountered while parsing file: {file_path}\nException: {e}")
+        traceback.print_exc()
         return None
     return features
 
