@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     recordButton.addEventListener('click', handleRecording);
 });
 
+const loadingSpinner = document.getElementById('loadingSpinner');
+
 function handleRecording(event) {
     event.preventDefault();
 
@@ -87,6 +89,8 @@ function stopRecording() {
         recordButton.textContent = 'Start Recording';
         isRecording = false;
 
+        loadingSpinner.style.display = 'block';
+
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             stream = null;
@@ -115,10 +119,12 @@ function stopRecording() {
             console.error('Error sending audio:', err);
             result.textContent = 'Error sending audio to server.';
         } finally {
+            loadingSpinner.style.display = 'none';
             status.textContent = '';
         }
     });
 }
+
 
 function visualize() {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
