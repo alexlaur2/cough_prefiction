@@ -6,15 +6,21 @@ const status = document.getElementById('status');
 const result = document.getElementById('result');
 
 recordButton.addEventListener('click', async () => {
-    // Check if the browser supports getUserMedia
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         alert('Your browser does not support audio recording.');
         return;
     }
 
-    // Request microphone access
+    let options = {mimeType: 'audio/wav'};
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'audio/webm';
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            options.mimeType = '';
+        }
+    }
+
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
         mediaRecorder = new MediaRecorder(stream);
 
         mediaRecorder.start();
@@ -38,10 +44,9 @@ stopButton.addEventListener('click', () => {
     stopButton.disabled = true;
 
     mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        audioChunks = [];  // Reset the chunks for the next recording
+        const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
+        audioChunks = [];
 
-        // Send the audio blob to the backend
         const formData = new FormData();
         formData.append('audio', audioBlob, 'cough.wav');
 

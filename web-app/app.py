@@ -8,8 +8,8 @@ import uuid
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'temp'
 
-model_path = os.path.join('model', 'cough_covid_classifier.h5')
-model = models.load_model('model/cough_covid_classifier')
+model_path = os.path.join('model', 'cough_covid_classifier.keras')
+model = models.load_model('model/cough_covid_classifier_updated.h5')
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])

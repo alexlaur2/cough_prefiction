@@ -22,28 +22,20 @@ def map_status(status):
 
 def extract_features(file_path, max_len=216):
     try:
-        # import file
         audio, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
-        # Trim silence
         audio, _ = librosa.effects.trim(audio)
-        # Ensure consistency in audio length
         if len(audio) > sample_rate * 5:
             audio = audio[:sample_rate * 5]
         else:
             pad_width = sample_rate * 5 - len(audio)
             audio = np.pad(audio, (0, pad_width), 'constant')
 
-        # Extract features
         mfccs = feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
         chroma = feature.chroma_stft(y=audio, sr=sample_rate)
 
-        # Stack features horizontally
         features = np.vstack((mfccs, chroma))
-
-        # Normalize
         features = (features - np.mean(features)) / np.std(features)
 
-        # Pad or truncate to fixed length
         if features.shape[1] < max_len:
             pad_width = max_len - features.shape[1]
             features = np.pad(features, pad_width=((0, 0), (0, pad_width)), mode='constant')
